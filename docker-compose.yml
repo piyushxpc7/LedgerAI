@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  # ── PostgreSQL ─────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: taxos
+      POSTGRES_USER: taxos
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taxos_local_dev}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U taxos" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis (for Celery — future) ────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+
+  # ── FastAPI Backend ────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql://taxos:${POSTGRES_PASSWORD:-taxos_local_dev}@postgres:5432/taxos
+      JWT_SECRET: ${JWT_SECRET}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-TaxOS <noreply@yourdomain.com>}
+      ALLOWED_ORIGINS_STR: ${ALLOWED_ORIGINS_STR:-http://localhost:3000}
+      REDIS_URL: redis://redis:6379/0
+      # File storage (optional — leave blank to use local disk)
+      USE_S3: ${USE_S3:-false}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-taxos-docs}
+      AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-}
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  uploads_data:
