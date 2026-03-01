@@ -5,9 +5,28 @@
 
 const API_BASE = '/api'
 
+export class ApiError extends Error {
+    status: number
+    detail?: unknown
+
+    constructor(message: string, status: number, detail?: unknown) {
+        super(message)
+        this.name = 'ApiError'
+        this.status = status
+        this.detail = detail
+    }
+}
+
 function getToken(): string | null {
     if (typeof window === 'undefined') return null
     return localStorage.getItem('ledgerai_token')
+}
+
+function handleUnauthorized() {
+    if (typeof window === 'undefined') return
+    localStorage.removeItem('ledgerai_token')
+    localStorage.removeItem('ledgerai_user')
+    window.location.href = '/login'
 }
 
 async function apiFetch<T>(
@@ -24,17 +43,24 @@ async function apiFetch<T>(
     const res = await fetch(`${API_BASE}${path}`, { ...options, headers })
 
     if (res.status === 401) {
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem('ledgerai_token')
-            localStorage.removeItem('ledgerai_user')
-            window.location.href = '/login'
-        }
-        throw new Error('Unauthorized')
+        handleUnauthorized()
+        throw new ApiError('Unauthorized', 401)
     }
 
     if (!res.ok) {
-        const error = await res.json().catch(() => ({ detail: res.statusText }))
-        throw new Error(error.detail || `API error ${res.status}`)
+        let errorBody: any = null
+        try {
+            errorBody = await res.json()
+        } catch {
+            // ignore JSON parse errors
+        }
+
+        const message =
+            (errorBody && (errorBody.detail || errorBody.message)) ||
+            res.statusText ||
+            `API error ${res.status}`
+
+        throw new ApiError(message, res.status, errorBody || undefined)
     }
 
     return res.json()
@@ -198,10 +224,18 @@ export const notices = {
             headers: token ? { Authorization: `Bearer ${token}` } : {},
             body: formData,
         })
+
+        if (res.status === 401) {
+            handleUnauthorized()
+            throw new ApiError('Unauthorized', 401)
+        }
+
         if (!res.ok) {
             const err = await res.json().catch(() => ({ detail: res.statusText }))
-            throw new Error(err.detail)
+            const message = err.detail || `API error ${res.status}`
+            throw new ApiError(message, res.status, err)
         }
+
         return res.json()
     },
 
@@ -273,7 +307,7 @@ export function getSectionLabel(section: string): string {
         '264': 'Sec 264',
         '245': 'Sec 245',
         '221(1)': 'Sec 221(1)',
-        OTHER: 'Other',
+        'OTHER': 'Other',
     }
     return map[section] || section
 }

@@ -8,12 +8,63 @@ from db.database import get_db
 from db import models, schemas
 from core.auth import authenticate_user, create_access_token, get_password_hash, get_current_user
 from core.config import settings
+from core.redis_client import get_redis, RedisNotAvailable
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-# ── Simple in-memory reset token store ─────────────────────────────────────
-# For production with multiple workers, move this to Redis (Upstash free)
+# ── Password reset token store ─────────────────────────────────────────────
+# Primary store: Redis (shared across workers). Fallback: in-memory dict for local dev.
 _reset_tokens: dict[str, dict] = {}  # token_hash → {user_id, expires_at}
+
+
+def _store_reset_token(token_hash: str, user_id: str, expires_at: datetime) -> None:
+    """
+    Store reset token in Redis when available, otherwise fall back to in-memory dict.
+    """
+    # Try Redis first so multi-worker deployments share the same token store
+    try:
+        redis = get_redis()
+        # Use Redis TTL rather than persisting expires_at in the value
+        key = f"password-reset:{token_hash}"
+        ttl_seconds = max(1, int((expires_at - datetime.utcnow()).total_seconds()))
+        redis.setex(key, ttl_seconds, user_id)
+        return
+    except RedisNotAvailable as exc:
+        # Local/dev environments may not have Redis — fall back gracefully
+        print(f"Password reset tokens using in-memory store (Redis unavailable): {exc}")
+
+    _reset_tokens[token_hash] = {
+        "user_id": user_id,
+        "expires_at": expires_at,
+    }
+
+
+def _consume_reset_token(token_hash: str) -> str:
+    """
+    Look up and invalidate a reset token.
+
+    Returns the associated user_id or raises HTTPException if invalid/expired.
+    """
+    # Prefer Redis: if key exists and we can delete it, we trust Redis TTL for expiry
+    try:
+        redis = get_redis()
+        key = f"password-reset:{token_hash}"
+        user_id = redis.get(key)
+        if user_id:
+            redis.delete(key)
+            return str(user_id)
+    except RedisNotAvailable:
+        # Fall through to in-memory store
+        pass
+
+    entry = _reset_tokens.get(token_hash)
+    if not entry or datetime.utcnow() > entry["expires_at"]:
+        raise HTTPException(status_code=400, detail="Reset link is invalid or has expired.")
+
+    user_id = entry["user_id"]
+    # Invalidate after use
+    del _reset_tokens[token_hash]
+    return str(user_id)
 
 
 # ── Rate limiting helpers ─────────────────────────────────────────────
@@ -116,12 +167,13 @@ def forgot_password(payload: schemas.ForgotPassword, db: Session = Depends(get_d
         # Generate a secure token, store its hash (never store raw tokens)
         raw_token = secrets.token_urlsafe(32)
         token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
-        _reset_tokens[token_hash] = {
-            "user_id": user.id,
-            "expires_at": datetime.utcnow() + timedelta(hours=1),
-        }
+        expires_at = datetime.utcnow() + timedelta(hours=1)
+
+        _store_reset_token(token_hash=token_hash, user_id=str(user.id), expires_at=expires_at)
+
         try:
             from services.email_service import send_password_reset
+
             send_password_reset(to=user.email, reset_token=raw_token)
         except Exception as e:
             print(f"Password reset email failed: {e}")
@@ -133,19 +185,15 @@ def forgot_password(payload: schemas.ForgotPassword, db: Session = Depends(get_d
 def reset_password(payload: schemas.ResetPassword, db: Session = Depends(get_db)):
     """Verify reset token and update password."""
     token_hash = hashlib.sha256(payload.token.encode()).hexdigest()
-    entry = _reset_tokens.get(token_hash)
-    if not entry or datetime.utcnow() > entry["expires_at"]:
-        raise HTTPException(status_code=400, detail="Reset link is invalid or has expired.")
-
     if len(payload.new_password) < 8:
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters.")
 
-    user = db.query(models.User).filter(models.User.id == entry["user_id"]).first()
+    user_id = _consume_reset_token(token_hash)
+    user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=400, detail="User not found.")
 
     user.hashed_password = get_password_hash(payload.new_password)
     db.commit()
-    del _reset_tokens[token_hash]  # invalidate token after use
 
     return {"message": "Password updated successfully."}

@@ -35,7 +35,7 @@ python db/seed.py
 uvicorn main:app --reload --port 8000
 ```
 
-### 2. Setup Frontend
+### 2. Setup Frontend (Local)
 
 ```bash
 cd frontend
@@ -46,6 +46,82 @@ npm run dev
 ```
 
 Open **http://localhost:3000**
+
+---
+
+## 🌐 Production Deployment
+
+### Frontend — Vercel (recommended)
+
+The `frontend` app is a standard Next.js project and works out-of-the-box on Vercel:
+
+1. Push this repo to GitHub.
+2. In Vercel, **Create New Project** and select the repo.
+3. Set **Root Directory** to `frontend/`.
+4. Keep the default build settings (`npm install`, `npm run build`, `npm start` not needed for Vercel).
+5. Configure environment variables in Vercel:
+   - `NEXT_PUBLIC_API_URL=https://your-backend.example.com`
+6. Deploy.  
+   The Next.js rewrite in [`frontend/next.config.ts`](frontend/next.config.ts) will send all `/api/*` requests to your backend:
+
+```ts
+// frontend/next.config.ts
+const nextConfig = {
+  async rewrites() {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${backendUrl}/api/:path*`,
+      },
+    ];
+  },
+};
+
+module.exports = nextConfig;
+```
+
+> In production, set `NEXT_PUBLIC_API_URL` to the public HTTPS URL of your backend (see below).
+
+### Backend — Containerised FastAPI
+
+The backend already ships with a production-ready Dockerfile and a `docker-compose.yml` you can adapt for your infra.
+
+#### Option A — Single VM (e.g. EC2 / Droplet)
+
+1. Provision a VM with Docker + Docker Compose.
+2. Copy this repo (or just the `backend/` directory) onto the VM.
+3. Create a `.env` on the host based on [`.env.example`](.env.example) and set at minimum:
+   - `APP_ENV=production`
+   - `DATABASE_URL=postgresql://user:password@host:5432/ledgerai`
+   - `JWT_SECRET=<strong-random-secret>`
+   - `MISTRAL_API_KEY=<your-mistral-key>`
+   - `ALLOWED_ORIGINS_STR=https://your-vercel-domain.vercel.app,https://yourcustomdomain.com`
+4. Use `docker-compose.yml` as a reference:
+   - Run Postgres as a managed service **or** keep the bundled `postgres` service for smaller deployments.
+   - Run the `backend` service built from [`backend/Dockerfile`](backend/Dockerfile).
+5. Put Nginx/Caddy/Traefik in front of the backend container to terminate HTTPS and expose:
+   - `https://your-backend.example.com/api/*` → `http://backend:8000/api/*`
+
+#### Option B — Managed container service (ECS / Cloud Run / Render / Railway)
+
+1. Build and push the backend image:
+
+   ```bash
+   cd backend
+   docker build -t your-registry/ledgerai-backend:latest .
+   docker push your-registry/ledgerai-backend:latest
+   ```
+
+2. Create a service in your provider of choice:
+   - Image: `your-registry/ledgerai-backend:latest`
+   - Port: `8000`
+   - Health check: `GET /health` (expects JSON with `status: "ok"` or `"degraded"`).
+3. Attach a managed Postgres instance and set `DATABASE_URL` accordingly.
+4. Configure environment variables matching [`.env.example`](.env.example):
+   - `APP_ENV=production`
+   - `JWT_SECRET`, `MISTRAL_API_KEY`, `RESEND_API_KEY`, storage (`USE_S3`, `AWS_*`), `ALLOWED_ORIGINS_STR`, `REDIS_URL` (optional).
+5. Expose the service over HTTPS using a managed load balancer or custom domain; use that URL as `NEXT_PUBLIC_API_URL` in Vercel.
 
 ---
 
@@ -158,8 +234,42 @@ CA Approval Card       ──── CA reviews proof + draft → Approve / Edit 
 - Passwords hashed with bcrypt
 - JWT auth (7-day expiry)
 - Firm-level data isolation
-- PDF files stored locally (configure S3 via `.env` for production)
+- PDF files stored locally by default (configure S3/R2 via `.env` for production)
 - All portal notice PDFs are decrypted using PAN+DOB — never stored plaintext
+
+---
+
+## 🛠 Operations & Runbooks
+
+- **Environments**
+  - `APP_ENV=development`: local dev, docs enabled, relaxed logging.
+  - `APP_ENV=production`: stricter startup checks, docs hidden, HSTS enabled, warnings for missing AI keys.
+- **Secret rotation**
+  - `JWT_SECRET`: rotate by updating the value in your secret manager and restarting the backend; all existing sessions are invalidated.
+  - `MISTRAL_API_KEY`, `RESEND_API_KEY`, `AWS_*`: update in your provider’s secret store and restart containers.
+- **Monitoring health**
+  - `GET /health`: used by load balancers; returns DB and AI status and current `app_env`.
+  - Watch for `PIPELINE_FAILED` entries in `audit_logs` when debugging notice pipeline issues.
+- **Logs**
+  - Backend uses Python logging plus structured audit logs (`audit_logs` table) for key actions:
+    - `NOTICE_UPLOADED`, `PIPELINE_COMPLETE`, `PIPELINE_FAILED`, `DRAFT_APPROVED`, `DRAFT_EDITED`, `ESCALATED_MANUAL`.
+  - For production, forward container stdout/stderr to your log platform (CloudWatch, Loki, Datadog, etc.).
+- **Notice pipeline failures**
+  - When the AI pipeline crashes, the notice is marked `FAILED` and an audit log entry is created.
+  - Typical remediation steps:
+    1. Check raw PDF in storage for corruption.
+    2. Verify `MISTRAL_API_KEY` and upstream AI availability.
+    3. Re-upload the notice after fixing configuration.
+
+### Future: Database migrations
+
+Alembic is already included in `backend/requirements.txt` and can be adopted for schema evolution:
+
+1. Create an Alembic config in `backend/` and point it at `db.database:Base`.
+2. Generate an initial migration from the existing models.
+3. For new schema changes, generate and apply migrations instead of relying on `create_all`.
+
+This is recommended before large-scale production rollout, but the current setup is sufficient for early-stage deployments.
 
 ---
 

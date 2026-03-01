@@ -1,4 +1,5 @@
 """FastAPI routes: notice management + AI pipeline trigger + approval."""
+import logging
 import threading
 from datetime import datetime
 from typing import List, Optional
@@ -13,6 +14,8 @@ from agents.graph import run_notice_pipeline
 from services.storage_service import save_file, validate_upload
 
 router = APIRouter(prefix="/notices", tags=["notices"])
+
+logger = logging.getLogger("ledgerai.notices")
 
 
 # File saving is handled by storage_service.save_file(file, subfolder)
@@ -33,11 +36,23 @@ def _run_pipeline_background(
     from db.database import SessionLocal
     db = SessionLocal()
     try:
+        logger.info(
+            "Starting notice pipeline",
+            extra={
+                "notice_id": notice_id,
+                "client_pan": client_pan,
+                "assessment_year": assessment_year,
+            },
+        )
+
         # Mark as ANALYZING
         notice = db.query(models.Notice).filter(models.Notice.id == notice_id).first()
         if notice:
             notice.status = models.NoticeStatus.ANALYZING
             db.commit()
+        else:
+            logger.warning("Notice not found before pipeline start", extra={"notice_id": notice_id})
+            return
 
         # Run LangGraph pipeline
         result = run_notice_pipeline(
@@ -54,6 +69,7 @@ def _run_pipeline_background(
         # Refresh notice
         notice = db.query(models.Notice).filter(models.Notice.id == notice_id).first()
         if not notice:
+            logger.error("Notice disappeared during pipeline run", extra={"notice_id": notice_id})
             return
 
         # Update notice with AI results
@@ -86,13 +102,16 @@ def _run_pipeline_background(
                     except ValueError:
                         continue
             except Exception:
-                pass
+                logger.debug("Failed to parse deadline from string", extra={"notice_id": notice_id, "deadline": result.get("deadline")})
 
         if result.get("strategy"):
             try:
                 notice.ai_strategy = models.ResolutionStrategy(result["strategy"])
             except ValueError:
-                pass
+                logger.debug(
+                    "Unknown resolution strategy from pipeline",
+                    extra={"notice_id": notice_id, "strategy": result.get("strategy")},
+                )
 
         notice.ai_strategy_reasoning = result.get("strategy_reasoning")
         notice.ai_draft_response = result.get("draft_response")
@@ -133,7 +152,7 @@ def _run_pipeline_background(
                 "root_cause": result.get("root_cause"),
                 "confidence": result.get("classification_confidence"),
                 "error": result.get("error"),
-            }
+            },
         )
         db.add(log)
         db.commit()
@@ -157,17 +176,37 @@ def _run_pipeline_background(
                     strategy=result.get("strategy"),
                 )
         except Exception as email_err:
-            print(f"Email notification failed (non-critical): {email_err}")
+            logger.warning(
+                "Email notification failed (non-critical)",
+                extra={"notice_id": notice_id, "error": str(email_err)},
+            )
+
+        logger.info(
+            "Notice pipeline completed",
+            extra={
+                "notice_id": notice_id,
+                "firm_id": notice.firm_id,
+                "status": str(notice.status),
+            },
+        )
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        logger.exception("Unhandled error in notice pipeline", extra={"notice_id": notice_id})
         db.rollback()
         # Mark as FAILED
         try:
             notice = db.query(models.Notice).filter(models.Notice.id == notice_id).first()
             if notice:
                 notice.status = models.NoticeStatus.FAILED
+                db.commit()
+
+                fail_log = models.AuditLog(
+                    firm_id=notice.firm_id,
+                    notice_id=notice_id,
+                    action="PIPELINE_FAILED",
+                    details={"error": str(e)},
+                )
+                db.add(fail_log)
                 db.commit()
         except Exception:
             pass
