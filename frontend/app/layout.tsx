@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'TaxOS — The Operating System for Indian Tax Compliance',
+  title: 'LedgerAI — The Operating System for Indian Tax Compliance',
   description: 'AI-powered income tax notice management for CA firms. Turn 3 hours of manual notice work into 90-second evidence confirmation.',
   keywords: 'income tax, notice management, CA firms, AI, India, 143(1), AIS mismatch, TDS',
 }

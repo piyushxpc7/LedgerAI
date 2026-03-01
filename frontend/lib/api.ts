@@ -1,5 +1,5 @@
 /**
- * TaxOS API Client
+ * LedgerAI API Client
  * Type-safe wrapper for all backend API calls.
  */
 
@@ -7,7 +7,7 @@ const API_BASE = '/api'
 
 function getToken(): string | null {
     if (typeof window === 'undefined') return null
-    return localStorage.getItem('taxos_token')
+    return localStorage.getItem('ledgerai_token')
 }
 
 async function apiFetch<T>(
@@ -25,8 +25,8 @@ async function apiFetch<T>(
 
     if (res.status === 401) {
         if (typeof window !== 'undefined') {
-            localStorage.removeItem('taxos_token')
-            localStorage.removeItem('taxos_user')
+            localStorage.removeItem('ledgerai_token')
+            localStorage.removeItem('ledgerai_user')
             window.location.href = '/login'
         }
         throw new Error('Unauthorized')

@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
             <div style={{ width: 420, background: 'var(--text-primary)', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '40px 44px' }}>
                 <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 30, height: 30, background: 'var(--teal)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 14, color: '#fff' }}>T</div>
-                    <span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: '#fff' }}>TaxOS</span>
+                    <span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: '#fff' }}>LedgerAI</span>
                 </Link>
 
                 <div>
@@ -130,7 +130,7 @@ export default function ResetPasswordPage() {
                 </div>
 
                 <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', lineHeight: 1.6 }}>
-                    TaxOS uses industry-standard encryption to protect your account. Never share your reset link with anyone.
+                    LedgerAI uses industry-standard encryption to protect your account. Never share your reset link with anyone.
                 </p>
             </div>
 

@@ -1,5 +1,5 @@
 """
-LangGraph Agent Pipeline for TaxOS
+LangGraph Agent Pipeline for LedgerAI
 4 agents: Classifier → Analyst → Strategist → Drafter
 Uses Mistral AI + cross-reference engine
 """

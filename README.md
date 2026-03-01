@@ -1,4 +1,4 @@
-# TaxOS — The Operating System for Indian Tax Compliance
+# LedgerAI — The Operating System for Indian Tax Compliance
 
 > **AI-powered income tax notice management for CA firms.**
 > Upload a notice PDF → 4-agent AI pipeline → get a legally drafted response in minutes.
@@ -53,8 +53,8 @@ Open **http://localhost:3000**
 
 | Field | Value |
 |-------|-------|
-| Email | `demo@taxos.ai` |
-| Password | `taxos2026` |
+| Email | `demo@ledgerai.ai` |
+| Password | `ledgerai2026` |
 
 ---
 
@@ -165,8 +165,8 @@ CA Approval Card       ──── CA reviews proof + draft → Approve / Edit 
 
 ## ⚖ Liability
 
-TaxOS is software infrastructure, **not a legal advisor**. The CA firm holds all responsibility for submitted responses. TaxOS mirrors Tally's established liability model.
+LedgerAI is software infrastructure, **not a legal advisor**. The CA firm holds all responsibility for submitted responses. LedgerAI mirrors Tally's established liability model.
 
 ---
 
-*TaxOS © 2026 — Confidential. YC Application Stage.*
+*LedgerAI © 2026 — Confidential. YC Application Stage.*

@@ -6,8 +6,8 @@ import { auth } from '@/lib/api'
 
 export default function LoginPage() {
     const router = useRouter()
-    const [email, setEmail] = useState('demo@taxos.ai')
-    const [password, setPassword] = useState('taxos2026')
+    const [email, setEmail] = useState('demo@ledgerai.ai')
+    const [password, setPassword] = useState('ledgerai2026')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
@@ -17,8 +17,8 @@ export default function LoginPage() {
         setError('')
         try {
             const res = await auth.login({ email, password })
-            localStorage.setItem('taxos_token', res.access_token)
-            localStorage.setItem('taxos_user', JSON.stringify(res.user))
+            localStorage.setItem('ledgerai_token', res.access_token)
+            localStorage.setItem('ledgerai_user', JSON.stringify(res.user))
             router.push('/dashboard')
         } catch (err: any) {
             setError(err.message || 'Login failed')
@@ -39,7 +39,7 @@ export default function LoginPage() {
                 <div style={{ position: 'relative', zIndex: 1 }}>
                     <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
                         <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg, #0A9B88, #14B8A6)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 18, color: '#fff' }}>T</div>
-                        <span style={{ fontWeight: 800, fontSize: 20, color: '#fff' }}>TaxOS</span>
+                        <span style={{ fontWeight: 800, fontSize: 20, color: '#fff' }}>LedgerAI</span>
                     </Link>
                 </div>
 
@@ -48,7 +48,7 @@ export default function LoginPage() {
                         India's Smartest<br />Tax Notice Platform
                     </div>
                     <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, marginBottom: 40, maxWidth: 340 }}>
-                        CA firms using TaxOS save 120+ hours per month by letting AI handle notice analysis, evidence building, and response drafting.
+                        CA firms using LedgerAI save 120+ hours per month by letting AI handle notice analysis, evidence building, and response drafting.
                     </p>
 
                     {/* Mini stats */}
@@ -83,7 +83,7 @@ export default function LoginPage() {
                     {/* Demo creds hint */}
                     <div style={{ padding: '12px 16px', background: '#F0FDFB', border: '1.5px solid #CCFBF1', borderRadius: 10, marginBottom: 24 }}>
                         <div style={{ fontSize: 11, fontWeight: 700, color: '#0A9B88', marginBottom: 3, letterSpacing: '0.3px' }}>DEMO CREDENTIALS (pre-filled)</div>
-                        <div style={{ fontSize: 12.5, color: '#374151', fontFamily: 'monospace' }}>demo@taxos.ai · taxos2026</div>
+                        <div style={{ fontSize: 12.5, color: '#374151', fontFamily: 'monospace' }}>demo@ledgerai.ai · ledgerai2026</div>
                     </div>
 
                     <form onSubmit={handleLogin}>

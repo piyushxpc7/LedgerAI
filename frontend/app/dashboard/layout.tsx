@@ -40,14 +40,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     useEffect(() => {
         setMounted(true)
-        if (!localStorage.getItem('taxos_token')) { router.push('/login'); return }
-        const u = localStorage.getItem('taxos_user')
+        if (!localStorage.getItem('ledgerai_token')) { router.push('/login'); return }
+        const u = localStorage.getItem('ledgerai_user')
         if (u) setUser(JSON.parse(u))
     }, [router])
 
     function logout() {
-        localStorage.removeItem('taxos_token')
-        localStorage.removeItem('taxos_user')
+        localStorage.removeItem('ledgerai_token')
+        localStorage.removeItem('ledgerai_user')
         router.push('/login')
     }
 
@@ -66,7 +66,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 9 }}>
                         <div style={{ width: 30, height: 30, background: 'var(--teal)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 14, flexShrink: 0 }}>T</div>
                         <div>
-                            <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--text-primary)', lineHeight: 1 }}>TaxOS</div>
+                            <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--text-primary)', lineHeight: 1 }}>LedgerAI</div>
                             <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>CA Dashboard</div>
                         </div>
                     </Link>

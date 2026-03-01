@@ -167,7 +167,7 @@ function StepCard({ step, title, desc, delay }: { step: string; title: string; d
 export default function LandingPage() {
   const router = useRouter()
   useEffect(() => {
-    if (localStorage.getItem('taxos_token')) router.push('/dashboard')
+    if (localStorage.getItem('ledgerai_token')) router.push('/dashboard')
   }, [router])
 
   return (
@@ -179,7 +179,7 @@ export default function LandingPage() {
             <div style={{ width: 28, height: 28, background: 'var(--teal)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13, color: '#fff', transition: 'transform 0.15s' }}
               onMouseOver={e => (e.currentTarget.style.transform = 'scale(1.08)')}
               onMouseOut={e => (e.currentTarget.style.transform = 'scale(1)')}>T</div>
-            <span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--text-primary)' }}>TaxOS</span>
+            <span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--text-primary)' }}>LedgerAI</span>
           </div>
           <div style={{ display: 'flex', gap: 24, flex: 1 }}>
             {['Features', 'Pricing', 'About'].map(item => (
@@ -213,7 +213,7 @@ export default function LandingPage() {
           </h1>
 
           <p style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)', lineHeight: 1.65, marginBottom: 32, maxWidth: 440, animation: 'slide-up 0.45s cubic-bezier(0.16,1,0.3,1) 160ms both' }}>
-            Upload a notice PDF. TaxOS classifies it, cross-references Form 26AS and ITR, builds a proof document, and drafts a legally structured response — in minutes.
+            Upload a notice PDF. LedgerAI classifies it, cross-references Form 26AS and ITR, builds a proof document, and drafts a legally structured response — in minutes.
           </p>
 
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 32, animation: 'slide-up 0.45s cubic-bezier(0.16,1,0.3,1) 220ms both' }}>
@@ -294,7 +294,7 @@ export default function LandingPage() {
             {[
               {
                 tag: 'Evidence Engine', title: 'Proof document in seconds',
-                desc: 'TaxOS maps every notice claim against Form 26AS, AIS, and ITR. You see exactly where the mismatch is — with confidence scores and source citations.',
+                desc: 'LedgerAI maps every notice claim against Form 26AS, AIS, and ITR. You see exactly where the mismatch is — with confidence scores and source citations.',
                 preview: (
                   <div style={{ marginTop: 18, padding: '14px', background: '#F5F6F8', borderRadius: 8, border: '1px solid var(--border)' }}>
                     {[
@@ -312,7 +312,7 @@ export default function LandingPage() {
               },
               {
                 tag: 'Strategy Engine', title: 'Picks the best resolution path',
-                desc: 'Based on thousands of resolved notices, TaxOS recommends the path with the highest expected success — with percentage rates from real outcomes.',
+                desc: 'Based on thousands of resolved notices, LedgerAI recommends the path with the highest expected success — with percentage rates from real outcomes.',
                 preview: (
                   <div style={{ marginTop: 18 }}>
                     {[
@@ -425,7 +425,7 @@ export default function LandingPage() {
             <div style={{ maxWidth: 280 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                 <div style={{ width: 26, height: 26, background: 'var(--teal)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 12, color: '#fff' }}>T</div>
-                <span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: '#fff' }}>TaxOS</span>
+                <span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: '#fff' }}>LedgerAI</span>
               </div>
               <p style={{ fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.35)', lineHeight: 1.7 }}>The operating system for Indian tax compliance. Built for CA firms who refuse to waste hours on work that can be automated.</p>
             </div>
@@ -449,8 +449,8 @@ export default function LandingPage() {
           </div>
           <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', marginBottom: 20 }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
-            <p style={{ fontSize: 'var(--text-xs)', color: 'rgba(255,255,255,0.25)' }}>© 2026 TaxOS. Confidential.</p>
-            <p style={{ fontSize: 'var(--text-xs)', color: 'rgba(255,255,255,0.25)' }}>TaxOS generates drafts. The CA firm holds all liability.</p>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'rgba(255,255,255,0.25)' }}>© 2026 LedgerAI. Confidential.</p>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'rgba(255,255,255,0.25)' }}>LedgerAI generates drafts. The CA firm holds all liability.</p>
           </div>
         </div>
       </footer>

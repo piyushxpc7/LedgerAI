@@ -1,5 +1,5 @@
 """
-Seed script — Creates demo data for TaxOS MVP demo.
+Seed script — Creates demo data for LedgerAI MVP demo.
 Run: python db/seed.py
 """
 import sys
@@ -16,18 +16,18 @@ def seed():
     db = SessionLocal()
 
     # Check if already seeded
-    existing = db.query(models.Firm).filter(models.Firm.email == "demo@taxos.ai").first()
+    existing = db.query(models.Firm).filter(models.Firm.email == "demo@ledgerai.ai").first()
     if existing:
         print("✅ Database already seeded. Skipping.")
         db.close()
         return
 
-    print("🌱 Seeding TaxOS demo data...")
+    print("🌱 Seeding LedgerAI demo data...")
 
     # ── Firm ────────────────────────────────────────────────────────────────
     firm = models.Firm(
         name="Sharma & Associates — CA Firm",
-        email="demo@taxos.ai",
+        email="demo@ledgerai.ai",
         phone="+91-9876543210",
         address="304, Maker Chambers IV, Nariman Point, Mumbai 400021",
     )
@@ -38,15 +38,15 @@ def seed():
     partner = models.User(
         firm_id=firm.id,
         name="CA Rajesh Sharma",
-        email="demo@taxos.ai",
-        hashed_password=get_password_hash("taxos2026"),
+        email="demo@ledgerai.ai",
+        hashed_password=get_password_hash("ledgerai2026"),
         role=models.UserRole.PARTNER,
     )
     senior = models.User(
         firm_id=firm.id,
         name="CA Priya Mehta",
-        email="priya@taxos.ai",
-        hashed_password=get_password_hash("taxos2026"),
+        email="priya@ledgerai.ai",
+        hashed_password=get_password_hash("ledgerai2026"),
         role=models.UserRole.SENIOR_CA,
     )
     db.add_all([partner, senior])
@@ -320,7 +320,7 @@ Respectfully submitted,""",
     db.close()
 
     print("✅ Seeded: 1 firm, 2 users, 5 clients, 4 notices, 3 proof objects")
-    print("   Login: demo@taxos.ai / taxos2026")
+    print("   Login: demo@ledgerai.ai / ledgerai2026")
 
 
 if __name__ == "__main__":

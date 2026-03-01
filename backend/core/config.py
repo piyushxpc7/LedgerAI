@@ -5,18 +5,18 @@ import sys
 
 
 class Settings(BaseSettings):
-    app_name: str = "TaxOS"
+    app_name: str = "LedgerAI"
     app_env: str = "development"  # "development" | "production"
     debug: bool = True
 
     # Database — default is local SQLite for dev, set DATABASE_URL for postgres in prod
     database_url: str = Field(
-        default="sqlite:///./taxos.db",
+        default="sqlite:///./ledgerai.db",
         description="Database connection URL. Use postgres://... in production."
     )
 
     # Auth
-    jwt_secret: str = Field(default="taxos-dev-secret-change-in-production")
+    jwt_secret: str = Field(default="ledgerai-dev-secret-change-in-production")
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 10080  # 7 days
 
@@ -28,13 +28,13 @@ class Settings(BaseSettings):
     use_s3: bool = False
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
-    aws_s3_bucket: str = "taxos-docs"
+    aws_s3_bucket: str = "ledgerai-docs"
     aws_region: str = "ap-south-1"
     aws_endpoint_url: str = ""   # Set to Cloudflare R2 endpoint for free egress
 
     # Email — Resend (free 3k/month). Leave blank to disable email.
     resend_api_key: str = ""
-    email_from: str = "TaxOS <noreply@yourdomain.com>"
+    email_from: str = "LedgerAI <noreply@yourdomain.com>"
 
     # Redis — for future Celery worker. Upstash is free.
     redis_url: str = "redis://localhost:6379/0"
@@ -59,7 +59,7 @@ class Settings(BaseSettings):
 settings = Settings()
 
 # ── Startup validation ────────────────────────────────────────────────
-_DEFAULT_JWT = "taxos-dev-secret-change-in-production"
+_DEFAULT_JWT = "ledgerai-dev-secret-change-in-production"
 
 if settings.is_production:
     errors = []
@@ -70,7 +70,7 @@ if settings.is_production:
     if "sqlite" in settings.database_url:
         errors.append("DATABASE_URL is still SQLite. Use a PostgreSQL URL in production.")
     if errors:
-        print("\n❌ TaxOS cannot start in production with the following issues:", file=sys.stderr)
+        print("\n❌ LedgerAI cannot start in production with the following issues:", file=sys.stderr)
         for e in errors:
             print(f"   • {e}", file=sys.stderr)
         sys.exit(1)

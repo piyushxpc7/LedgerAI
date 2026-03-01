@@ -105,7 +105,7 @@ export default function DashboardPage() {
     const [userName, setUserName] = useState('')
 
     useEffect(() => {
-        const u = JSON.parse(localStorage.getItem('taxos_user') || 'null')
+        const u = JSON.parse(localStorage.getItem('ledgerai_user') || 'null')
         if (u?.name) setUserName(u.name.split(' ')[0])
         dashboard.stats().then(setStats).finally(() => setLoading(false))
         const t = setInterval(() => dashboard.stats().then(setStats), 30000)
@@ -233,7 +233,7 @@ export default function DashboardPage() {
                         <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', lineHeight: 1.5 }}>Mistral AI · LangGraph · 4-agent pipeline</p>
                     </div>
 
-                    <p className="caption" style={{ padding: '2px 4px', lineHeight: 1.6 }}>TaxOS generates evidence and drafts. The CA firm holds all responsibility for submissions.</p>
+                    <p className="caption" style={{ padding: '2px 4px', lineHeight: 1.6 }}>LedgerAI generates evidence and drafts. The CA firm holds all responsibility for submissions.</p>
                 </div>
             </div>
         </div>

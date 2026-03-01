@@ -40,10 +40,10 @@ def _base_html(content: str) -> str:
     <div style="font-family: 'Inter', sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; color: #0F1117;">
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 28px;">
         <div style="width: 28px; height: 28px; background: #0A9B88; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #fff;">T</div>
-        <span style="font-weight: 700; font-size: 15px; color: #0F1117;">TaxOS</span>
+        <span style="font-weight: 700; font-size: 15px; color: #0F1117;">LedgerAI</span>
       </div>
       {content}
-      <p style="margin-top: 32px; font-size: 11px; color: #9BA3AF;">TaxOS generates evidence and draft letters. The CA firm holds all responsibility for submissions.
+      <p style="margin-top: 32px; font-size: 11px; color: #9BA3AF;">LedgerAI generates evidence and draft letters. The CA firm holds all responsibility for submissions.
       <br><a href="#" style="color: #9BA3AF;">Unsubscribe</a></p>
     </div>
     """
@@ -99,7 +99,7 @@ def send_deadline_alert(
         <tbody>{rows}</tbody>
       </table>
     """)
-    return _send(to, f"⏰ {len(notices)} notice deadline(s) approaching — TaxOS", html)
+    return _send(to, f"⏰ {len(notices)} notice deadline(s) approaching — LedgerAI", html)
 
 
 def send_password_reset(to: str, reset_token: str, app_url: str = "http://localhost:3000") -> bool:
@@ -111,14 +111,14 @@ def send_password_reset(to: str, reset_token: str, app_url: str = "http://localh
       <a href="{link}" style="display: inline-block; padding: 11px 22px; background: #0A9B88; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">Reset password →</a>
       <p style="margin-top: 20px; font-size: 12px; color: #9BA3AF;">If you didn't request this, ignore this email. Your password won't change.</p>
     """)
-    return _send(to, "Reset your TaxOS password", html)
+    return _send(to, "Reset your LedgerAI password", html)
 
 
 def send_welcome(to: str, firm_name: str, app_url: str = "http://localhost:3000") -> bool:
     """Sent on successful firm registration."""
     html = _base_html(f"""
-      <h2 style="font-size: 20px; font-weight: 700; margin: 0 0 8px;">Welcome to TaxOS, {firm_name}!</h2>
+      <h2 style="font-size: 20px; font-weight: 700; margin: 0 0 8px;">Welcome to LedgerAI, {firm_name}!</h2>
       <p style="color: #6B7280; margin: 0 0 20px;">Your account is ready. Start by adding your first client and uploading a notice PDF.</p>
       <a href="{app_url}/dashboard/clients" style="display: inline-block; padding: 11px 22px; background: #0A9B88; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">Add first client →</a>
     """)
-    return _send(to, f"Welcome to TaxOS — {firm_name}", html)
+    return _send(to, f"Welcome to LedgerAI — {firm_name}", html)

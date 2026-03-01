@@ -1,5 +1,5 @@
 """
-TaxOS Backend — FastAPI main application
+LedgerAI Backend — FastAPI main application
 """
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
@@ -25,7 +25,7 @@ except ImportError:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
-    print(f"✅ TaxOS API started ({settings.app_env}). Database ready.")
+    print(f"✅ LedgerAI API started ({settings.app_env}). Database ready.")
     if not settings.mistral_api_key:
         print("⚠️  MISTRAL_API_KEY not set — AI pipeline will use fallback responses.")
     yield
@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
 
 # ── App setup ─────────────────────────────────────────────────────────
 app = FastAPI(
-    title="TaxOS API",
+    title="LedgerAI API",
     description="The Operating System for Indian Tax Compliance — AI-powered notice management for CA firms",
     version="1.0.0",
     # Hide docs in production
@@ -85,7 +85,7 @@ app.include_router(users.router, prefix="/api")
 @app.get("/")
 def root():
     return {
-        "app": "TaxOS API",
+        "app": "LedgerAI API",
         "version": "1.0.0",
         "env": settings.app_env,
         "status": "running",

@@ -35,7 +35,7 @@ def classify_notice(notice_text: str) -> Dict[str, Any]:
     Use Mistral to extract and classify notice fields.
     Returns structured JSON with notice details.
     """
-    system_prompt = """You are TaxOS, an expert Indian tax law assistant specializing in Income Tax notices.
+    system_prompt = """You are LedgerAI, an expert Indian tax law assistant specializing in Income Tax notices.
 Your task is to extract and classify key fields from an Income Tax Department notice.
 
 You MUST respond with valid JSON only. No explanation, no markdown, just the JSON object.
@@ -96,7 +96,7 @@ def recommend_strategy(
     """
     Use Mistral to recommend the best resolution strategy.
     """
-    system_prompt = """You are TaxOS's strategy engine — an expert Indian tax attorney.
+    system_prompt = """You are LedgerAI's strategy engine — an expert Indian tax attorney.
 Based on the notice details and evidence, recommend the best resolution strategy.
 
 Available strategies:
@@ -162,7 +162,7 @@ def draft_response(
     """
     Use Mistral to generate a legally structured response letter.
     """
-    system_prompt = """You are TaxOS's legal drafting engine — an expert in Indian Income Tax law.
+    system_prompt = """You are LedgerAI's legal drafting engine — an expert in Indian Income Tax law.
 Draft a formal, legally correct response letter to an Income Tax Department notice.
 
 Requirements:
@@ -226,7 +226,7 @@ Yours faithfully,
 
 def generate_doc_checklist(notice_type: str, strategy: str, section: str) -> list:
     """Generate a checklist of supporting documents needed."""
-    system_prompt = """You are a TaxOS assistant. Generate a checklist of supporting documents 
+    system_prompt = """You are a LedgerAI assistant. Generate a checklist of supporting documents 
 a CA needs to attach with their Income Tax notice response. Be specific and practical.
 
 Respond with a JSON array of strings. Each string is a document to be gathered.

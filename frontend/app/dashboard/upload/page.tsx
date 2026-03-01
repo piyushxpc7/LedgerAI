@@ -172,7 +172,7 @@ export default function UploadPage() {
                     <div className="card" style={{ padding: '18px' }}>
                         <h3 style={{ fontSize: 13, fontWeight: 700, color: '#111827', marginBottom: 12 }}>💡 Upload Tips</h3>
                         {[
-                            { title: 'Encrypted PDFs', desc: 'Portal downloads use PAN+DOB as password. TaxOS decrypts automatically using the DOB you stored for the client.' },
+                            { title: 'Encrypted PDFs', desc: 'Portal downloads use PAN+DOB as password. LedgerAI decrypts automatically using the DOB you stored for the client.' },
                             { title: 'Form 26AS', desc: 'Download from TRACES portal. Highly recommended for TDS mismatch notices — improves accuracy by 40%.' },
                             { title: 'ITR Acknowledgement', desc: 'From e-filing portal. Needed for AIS mismatch and income omission notices.' },
                         ].map((tip, i) => (
@@ -189,7 +189,7 @@ export default function UploadPage() {
                     </div>
 
                     <div style={{ padding: '12px 14px', background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 10, fontSize: 11, color: '#9CA3AF', lineHeight: 1.6 }}>
-                        ⚖ CA holds all responsibility for submitted responses. TaxOS generates drafts, not legal advice.
+                        ⚖ CA holds all responsibility for submitted responses. LedgerAI generates drafts, not legal advice.
                     </div>
                 </div>
             </div>

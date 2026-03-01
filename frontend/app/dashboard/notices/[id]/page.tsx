@@ -227,7 +227,7 @@ export default function NoticeDetailPage({ params }: { params: Promise<{ id: str
                                     <button onClick={() => handleApprove('escalate')} className="btn-danger" disabled={approving} style={{ width: '100%', justifyContent: 'center', padding: '10px', fontSize: 13 }}>⚠ Escalate — Manual Review</button>
                                 </div>
                                 <div style={{ marginTop: 14, padding: '10px 12px', background: '#F9FAFB', borderRadius: 8, fontSize: 11, color: '#9CA3AF', lineHeight: 1.6 }}>
-                                    By approving, you confirm accuracy and accept responsibility per TaxOS terms.
+                                    By approving, you confirm accuracy and accept responsibility per LedgerAI terms.
                                 </div>
                             </div>
                         )}

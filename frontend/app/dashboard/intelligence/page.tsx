@@ -39,7 +39,7 @@ export default function IntelligencePage() {
         <div style={{ padding: '32px 36px', minHeight: '100vh' }}>
             <div style={{ marginBottom: 28 }}>
                 <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 4 }}>Resolution Intelligence</h1>
-                <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>Insights built from every notice resolved through TaxOS</p>
+                <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>Insights built from every notice resolved through LedgerAI</p>
             </div>
 
             {/* Intelligence flywheel */}
@@ -124,7 +124,7 @@ export default function IntelligencePage() {
                         <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-gold)', letterSpacing: '1px', marginBottom: 6 }}>PHASE 3 FEATURE</div>
                         <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>Pre-Filing Risk Engine</h3>
                         <p style={{ fontSize: 13, color: 'var(--text-muted)', maxWidth: 500, lineHeight: 1.6 }}>
-                            Before filing an ITR, TaxOS will analyze the return and predict: <em>"This return has a 73% chance of receiving a Section 133(6) notice"</em> — based on 100,000+ resolved cases in our intelligence database.
+                            Before filing an ITR, LedgerAI will analyze the return and predict: <em>"This return has a 73% chance of receiving a Section 133(6) notice"</em> — based on 100,000+ resolved cases in our intelligence database.
                         </p>
                     </div>
                     <div style={{ padding: '8px 20px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 99, fontSize: 12, fontWeight: 700, color: 'var(--accent-gold)' }}>

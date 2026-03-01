@@ -24,8 +24,8 @@ export default function RegisterPage() {
         setError('')
         try {
             const res = await auth.register(form)
-            localStorage.setItem('taxos_token', res.access_token)
-            localStorage.setItem('taxos_user', JSON.stringify(res.user))
+            localStorage.setItem('ledgerai_token', res.access_token)
+            localStorage.setItem('ledgerai_user', JSON.stringify(res.user))
             router.push('/dashboard')
         } catch (err: any) {
             setError(err.message || 'Registration failed. Please try again.')
@@ -40,7 +40,7 @@ export default function RegisterPage() {
             <div style={{ width: 420, background: 'var(--text-primary)', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '40px 44px' }}>
                 <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 30, height: 30, background: 'var(--teal)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 14, color: '#fff' }}>T</div>
-                    <span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: '#fff' }}>TaxOS</span>
+                    <span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: '#fff' }}>LedgerAI</span>
                 </Link>
 
                 <div>
@@ -67,7 +67,7 @@ export default function RegisterPage() {
                 </div>
 
                 <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', lineHeight: 1.6 }}>
-                    TaxOS is not a legal advisor. All responses submitted to the IT Department are the responsibility of the CA firm.
+                    LedgerAI is not a legal advisor. All responses submitted to the IT Department are the responsibility of the CA firm.
                 </p>
             </div>
 

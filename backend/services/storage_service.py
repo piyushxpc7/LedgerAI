@@ -9,7 +9,7 @@ Set in .env:
     USE_S3=true
     AWS_ACCESS_KEY_ID=<r2-access-key>
     AWS_SECRET_ACCESS_KEY=<r2-secret-key>
-    AWS_S3_BUCKET=taxos-docs
+    AWS_S3_BUCKET=ledgerai-docs
     AWS_ENDPOINT_URL=https://<account-id>.r2.cloudflarestorage.com
     AWS_REGION=auto
 """
