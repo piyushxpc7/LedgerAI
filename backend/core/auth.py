@@ -9,7 +9,7 @@ from core.config import settings
 from db.database import get_db
 from db import models
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 security = HTTPBearer()
 
 
