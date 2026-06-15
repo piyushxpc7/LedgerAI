@@ -1,3 +1,10 @@
+> # ⚠️ Superseded
+>
+> This project is superseded by **[Ledgerly](https://github.com/piyushxpc7/LedgerlyAI)** (private). It was an early public prototype focused on income-tax-notice management; the maintained version is a broader CA back-office automation platform. Kept for history — safe to make private/archive.
+
+
+---
+
 # LedgerAI — The Operating System for Indian Tax Compliance
 
 > **AI-powered income tax notice management for CA firms.**
